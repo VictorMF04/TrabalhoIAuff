@@ -1,0 +1,103 @@
+import heapq
+
+# Criando alguns grafos de exemplo
+edges = [
+    ("cfcd208495","eccbc87e4b"),
+    ("cfcd208495","eccbc87e4b"),
+    ("cfcd208495","c4ca4238a0"),
+    ("cfcd208495","1679091c5a"),
+    ("cfcd208495","a87ff679a2"),
+    ("c4ca4238a0","c9f0f895fb"),
+    ("c4ca4238a0","c4ca4238a0"),
+    ("c4ca4238a0","1679091c5a"),
+    ("c4ca4238a0","1679091c5a"),
+    ("c4ca4238a0","a87ff679a2"),
+    ("c81e728d9d","c4ca4238a0"),
+    ("c81e728d9d","c4ca4238a0"),
+    ("c81e728d9d","a87ff679a2"),
+    ("c81e728d9d","a87ff679a2"),
+    ("c81e728d9d","a87ff679a2"),
+    ("eccbc87e4b","8f14e45fce"),
+    ("eccbc87e4b","cfcd208495"),
+    ("eccbc87e4b","c9f0f895fb"),
+    ("eccbc87e4b","a87ff679a2"),
+    ("eccbc87e4b","e4da3b7fbb"),
+    ("a87ff679a2","c4ca4238a0"),
+    ("a87ff679a2","8f14e45fce"),
+    ("a87ff679a2","c81e728d9d"),
+    ("a87ff679a2","c81e728d9d"),
+    ("a87ff679a2","1679091c5a"),
+    ("e4da3b7fbb","eccbc87e4b"),
+    ("e4da3b7fbb","8f14e45fce"),
+    ("e4da3b7fbb","eccbc87e4b"),
+    ("e4da3b7fbb","1679091c5a"),
+    ("e4da3b7fbb","c4ca4238a0"),
+    ("1679091c5a","1679091c5a"),
+    ("1679091c5a","a87ff679a2"),
+    ("1679091c5a","c9f0f895fb"),
+    ("1679091c5a","c4ca4238a0"),
+    ("1679091c5a","c81e728d9d"),
+    ("8f14e45fce","a87ff679a2"),
+    ("8f14e45fce","e4da3b7fbb"),
+    ("8f14e45fce","8f14e45fce"),
+    ("8f14e45fce","c81e728d9d"),
+    ("8f14e45fce","c4ca4238a0"),
+    ("c9f0f895fb","1679091c5a"),
+    ("c9f0f895fb","c9f0f895fb"),
+    ("c9f0f895fb","cfcd208495"),
+    ("c9f0f895fb","c9f0f895fb"),
+    ("c9f0f895fb","cfcd208495"),
+]
+
+graph = {}
+for u, v in edges:
+    graph.setdefault(u, []).append(v)
+
+# 2) Generic A* on a directed graph with unit weights
+def a_star_graph(start, goal, graph, heuristic):
+    open_heap = []
+    # (f_score, g_score, node, parent)
+    heapq.heappush(open_heap, (heuristic(start, goal), 0, start, None))
+    came_from = {}      # node -> parent
+    g_score = {start: 0}
+
+    while open_heap:
+        f, g, node, parent = heapq.heappop(open_heap)
+        # record how we reached node
+        if node not in came_from:
+            came_from[node] = parent
+
+        if node == goal:
+            # reconstruct path
+            path = []
+            cur = goal
+            while cur is not None:
+                path.append(cur)
+                cur = came_from[cur]
+            return list(reversed(path)), came_from
+
+        for nbr in graph.get(node, []):
+            tentative_g = g + 1
+            if tentative_g < g_score.get(nbr, float('inf')):
+                g_score[nbr] = tentative_g
+                heapq.heappush(open_heap, (tentative_g + heuristic(nbr, goal),
+                                           tentative_g, nbr, node))
+    return None, came_from
+
+# 3) Trivial heuristic: h(n, goal) = 0  → A* ≡ BFS/Dijkstra on unweighted graph
+def zero_heuristic(n, goal):
+    return 0
+
+# 4) Run A* from a chosen start (e.g. cfcd208495) to our target
+start_node = "cfcd208495"
+target_node = "c81e728d9d"
+
+path, came_from = a_star_graph(start_node, target_node, graph, zero_heuristic)
+
+print("Found path:")
+print(path)  
+
+
+# 5) Inspect the immediate parent of the target
+parent_of_target = came_from.get(target_node)
+print(f"Parent of {target_node!r} is {parent_of_target!r}")
