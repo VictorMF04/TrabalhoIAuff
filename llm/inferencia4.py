@@ -31,57 +31,57 @@ if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 print("[DEBUG] Tokenizador carregado.")
 
-# Prompt completo
+# Prompt completo com exemplo 7 do dataset
 prompt_text = """
 Here is the graph to operate on:
 The graph has the following edges:
-cfcd208495 -> cfcd208495
-cfcd208495 -> 1679091c5a
-cfcd208495 -> c81e728d9d
-cfcd208495 -> c4ca4238a0
-c4ca4238a0 -> c9f0f895fb
+cfcd208495 -> eccbc87e4b
+cfcd208495 -> a87ff679a2
+cfcd208495 -> eccbc87e4b
+cfcd208495 -> 45c48cce2e
 c4ca4238a0 -> 45c48cce2e
-c4ca4238a0 -> eccbc87e4b
-c4ca4238a0 -> c9f0f895fb
-c81e728d9d -> 45c48cce2e
-c81e728d9d -> eccbc87e4b
-c81e728d9d -> eccbc87e4b
-c81e728d9d -> c9f0f895fb
-eccbc87e4b -> d3d9446802
-eccbc87e4b -> d3d9446802
-eccbc87e4b -> a87ff679a2
-eccbc87e4b -> c4ca4238a0
-a87ff679a2 -> 1679091c5a
-a87ff679a2 -> eccbc87e4b
+c4ca4238a0 -> 45c48cce2e
+c4ca4238a0 -> cfcd208495
+c4ca4238a0 -> c4ca4238a0
+c81e728d9d -> d3d9446802
+c81e728d9d -> cfcd208495
+c81e728d9d -> e4da3b7fbb
+c81e728d9d -> cfcd208495
+eccbc87e4b -> c9f0f895fb
+eccbc87e4b -> eccbc87e4b
+eccbc87e4b -> e4da3b7fbb
+eccbc87e4b -> c9f0f895fb
+a87ff679a2 -> d3d9446802
+a87ff679a2 -> d3d9446802
 a87ff679a2 -> cfcd208495
-a87ff679a2 -> e4da3b7fbb
+a87ff679a2 -> c9f0f895fb
+e4da3b7fbb -> eccbc87e4b
 e4da3b7fbb -> c4ca4238a0
-e4da3b7fbb -> 1679091c5a
-e4da3b7fbb -> 1679091c5a
-e4da3b7fbb -> 45c48cce2e
-1679091c5a -> 8f14e45fce
-1679091c5a -> 8f14e45fce
-1679091c5a -> e4da3b7fbb
-1679091c5a -> a87ff679a2
-8f14e45fce -> 45c48cce2e
-8f14e45fce -> e4da3b7fbb
-8f14e45fce -> 8f14e45fce
+e4da3b7fbb -> 8f14e45fce
+e4da3b7fbb -> c81e728d9d
+1679091c5a -> 45c48cce2e
+1679091c5a -> c4ca4238a0
+1679091c5a -> c9f0f895fb
+1679091c5a -> eccbc87e4b
 8f14e45fce -> cfcd208495
+8f14e45fce -> eccbc87e4b
+8f14e45fce -> c4ca4238a0
+8f14e45fce -> 45c48cce2e
 c9f0f895fb -> eccbc87e4b
-c9f0f895fb -> cfcd208495
-c9f0f895fb -> eccbc87e4b
-c9f0f895fb -> 8f14e45fce
-45c48cce2e -> cfcd208495
+c9f0f895fb -> 1679091c5a
+c9f0f895fb -> c81e728d9d
+c9f0f895fb -> 45c48cce2e
+45c48cce2e -> d3d9446802
+45c48cce2e -> c4ca4238a0
+45c48cce2e -> c81e728d9d
 45c48cce2e -> 1679091c5a
-45c48cce2e -> a87ff679a2
-45c48cce2e -> a87ff679a2
-d3d9446802 -> 8f14e45fce
-d3d9446802 -> d3d9446802
-d3d9446802 -> 45c48cce2e
+d3d9446802 -> eccbc87e4b
 d3d9446802 -> e4da3b7fbb
+d3d9446802 -> eccbc87e4b
+d3d9446802 -> 45c48cce2e
 
 Operation:
-Find the parents of node 8f14e45fce.
+Find the parents of node e4da3b7fbb.
 
 You should immediately return the set of nodes that the operation results in, with no additional text. Return your final answer as a list of nodes in the very last line of your response.
 """

@@ -1,6 +1,6 @@
 import collections
 
-# Grafo de exemplo tirado do dataset
+# Grafo do primeiro exemplo do dataset
 edges = [
     ("cfcd208495","eccbc87e4b"),
     ("cfcd208495","c4ca4238a0"),
@@ -36,76 +36,60 @@ edges = [
     ("c9f0f895fb","cfcd208495"),
 ]
 
-graph = collections.defaultdict(list)
+graph       = collections.defaultdict(list)   # filhos
+rev_graph   = collections.defaultdict(list)   # pais
+
 for u, v in edges:
     graph[u].append(v)
+    rev_graph[v].append(u)
 
-# Busca em profundidade
+# Busca em profundidade 
 def dfs_path(start, goal, graph):
-    """
-    Retorna (path, came_from) se goal alcançável a partir de start.
-    Se não houver caminho, path = None.
-    """
-    stack = [(start, None)]          
-    came_from = {}                   
+    stack = [(start, None)]    # (nó, pai)
+    seen  = {}                 # nó -> pai
 
     while stack:
         node, parent = stack.pop()
-        if node in came_from:        
+        if node in seen:
             continue
-        came_from[node] = parent
-
+        seen[node] = parent
         if node == goal:
             path = []
             cur = goal
             while cur is not None:
                 path.append(cur)
-                cur = came_from[cur]
-            return list(reversed(path)), came_from
-
-        
-        for nbr in reversed(graph.get(node, [])):    
+                cur = seen[cur]
+            return list(reversed(path)), seen
+        for nbr in reversed(graph.get(node, [])):
             stack.append((nbr, node))
-
-
-    return None, came_from
+    return None, seen
 
 # Funções utilizadas
-def pai_de(node, came_from):
-    return came_from.get(node)
+def pais_de(node, rev_graph):
+    return list(dict.fromkeys(rev_graph.get(node, []))) 
 
 def filhos_de(node, graph):
-    return graph.get(node, [])
+    return list(dict.fromkeys(graph.get(node, [])))
 
 def pertence_ao_grafo(node, came_from):
     return node in came_from
 
 # Testes
-start = "cfcd208495"  
+start = "cfcd208495"
 
-print("Pai de um nó")
+print(" Pais de um nó")
+for n in ("eccbc87e4b", "c9f0f895fb"):
+    print(f"Pais de '{n}':", pais_de(n, rev_graph))
 
-_, came = dfs_path(start, "eccbc87e4b", graph)
-print(f"Pai de 'eccbc87e4b': {pai_de('eccbc87e4b', came)}")
+print("\n Filhos de um nó")
+for n in ("1679091c5a", "c9f0f895fb"):
+    print(f"Filhos de '{n}':", filhos_de(n, graph))
 
-_, came = dfs_path(start, "8f14e45fce", graph)
-print(f"Pai de '8f14e45fce': {pai_de('8f14e45fce', came)}")
+print("\n Testa se o nó está no grafo")
+testa1 = "c4ca4238a0"
+print(f"'{testa1}' pertence? ->",
+      pertence_ao_grafo(testa1, dfs_path(start, testa1, graph)[1]))
 
-
-print("\nFilhos de um nó")
-no1 = "cfcd208495"
-no2 = "1679091c5a"
-print(f"Filhos de '{no1}':", filhos_de(no1, graph))
-print(f"Filhos de '{no2}':", filhos_de(no2, graph))
-
-
-print("\nTesta se o nó está no grafo")
-pertence = "c4ca4238a0"
-path, came = dfs_path(start, pertence, graph)
-print(f"'{pertence}' pertence? ->", pertence_ao_grafo(pertence, came),
-      "| Caminho:", path)
-inexistente = "deadbeef"
-
-path, came = dfs_path(start, inexistente, graph)
-print(f"'{inexistente}' pertence? ->", pertence_ao_grafo(inexistente, came),
-      "| Caminho :", path)
+testa2 = "deadbeef"
+print(f"'{testa2}' pertence? ->",
+      pertence_ao_grafo(testa2, dfs_path(start, testa2, graph)[1]))
